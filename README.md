@@ -27,15 +27,15 @@ Inclua também rotas para as outras operações:
 - Edição;
 - Exclusão;
 - Consulta;
-### Nível 3 - Testes
-Crie testes unitários, utilizando Jest ou Vitest, para cada operação. Para cada nova implementação a seguir, também deve-se criar os testes.
-Refatore o endpoint de autenticação para que sempre se gere JWTs se login e senha estiverem cadastrados no Banco de Dados.
-### Nível 4 - Autenticação
+### Nível 3 - Autenticação
 Inclua um sistema de autenticação com JWT em todas as rotas.
-### Nível 5 - Gerenciamento de permissões
+### Nível 4 - Gerenciamento de permissões
 Agora, crie um sistema de gerenciamento de permissões.
 Crie um novo cadastro de permissões. Esse cadastro deve armazenar: `login` e `password`.
 Os cargos são: `Admin` e `Atendente` onde o Admin será permissão para excluir os tickets.
+### Nível 5 - Testes
+Crie testes unitários, utilizando Jest ou Vitest, para cada operação. Para cada nova implementação a seguir, também deve-se criar os testes.
+Refatore o endpoint de autenticação para que sempre se gere JWTs se login e senha estiverem cadastrados no Banco de Dados.
 ### Nível 6 - Infra
 Crie um `Dockerfile` para sua API.
 Crie um `docker-compose.yaml` para iniciar o seu projeto.
@@ -47,7 +47,7 @@ Documente tudo o que foi feito até aqui:
 Crie uma pipeline de deploy da aplicação em alguma estrutura de Cloud. (AWS ou Google)
 ## Front-end
 ### Nível 1 - Cadastro
-Crie a interface para cadastro dos tickets.
+Crie a interface utilizando React com tailwind para cadastro dos tickets.
 É importante que sua interface previna o cadastro de campos vazios, ou que não estejam nas regras definidas anteriormente.
 ### Nível 2 - Conectando na API
 Conecte a seu Front-end a API que foi criada, e faça o cadastro de um ticket refletir na sua API.
