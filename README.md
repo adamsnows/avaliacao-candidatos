@@ -44,7 +44,7 @@ Documente tudo o que foi feito até aqui:
 - Como instalar as dependência;
 - Como rodar o projeto;
 ### Nível 7 - Cloud
-Crie uma pipeline de deploy da aplicação em alguma estrutura de Cloud. (AWS ou Google)
+Deploy da aplicação em alguma plataforma Cloud. (AWS ou Google)
 ### Nível 8 - Monitoramento e Observabilidade
 Implemente monitoramento e observabilidade abrangente, incluindo logging centralizado, métricas, alertas, tracing distribuído, e dashboards.
 ### Nível 9 - Automação e Infraestrutura como Código
