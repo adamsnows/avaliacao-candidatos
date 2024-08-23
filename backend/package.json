@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "jest",
-    "start": "npx nodemon server.js"
+    "start": "npx nodemon server.js",
+    "clear": "node src/scripts/clearDatabase.js"
   },
   "keywords": [],
   "author": "",

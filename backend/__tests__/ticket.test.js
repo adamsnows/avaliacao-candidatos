@@ -1,16 +1,10 @@
-const { PrismaClient } = require("@prisma/client");
 const request = require("supertest");
 const app = require("../src/app");
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 describe("Ticket Routes", () => {
   beforeAll(async () => {
-    await prisma.ticket.deleteMany();
-    await prisma.user.deleteMany();
-    await prisma.collaborator.deleteMany();
-  });
-
-  afterEach(async () => {
     await prisma.ticket.deleteMany();
     await prisma.user.deleteMany();
     await prisma.collaborator.deleteMany();
@@ -21,7 +15,7 @@ describe("Ticket Routes", () => {
   });
 
   it("Deve criar um novo ticket com sucesso", async () => {
-    const newUser = await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username: "testuser",
         password: "testpassword",
@@ -29,7 +23,7 @@ describe("Ticket Routes", () => {
       },
     });
 
-    const newCollaborator = await prisma.collaborator.create({
+    const collaborator = await prisma.collaborator.create({
       data: {
         name: "Test Collaborator",
         email: "testcollaborator@example.com",
@@ -38,10 +32,12 @@ describe("Ticket Routes", () => {
       },
     });
 
-    const response = await request(app).post("/tickets").send({
+    const response = await request(app).post("/api/tickets").send({
       title: "Problema no sistema",
       description: "Descrição do problema",
-      collaboratorId: newCollaborator.id,
+      status: "PENDING",
+      userId: user.id,
+      collaboratorId: collaborator.id,
     });
 
     expect(response.statusCode).toBe(201);
@@ -49,5 +45,14 @@ describe("Ticket Routes", () => {
     expect(response.body.title).toBe("Problema no sistema");
   });
 
-  // Outros testes...
+  it("Deve retornar erro ao criar ticket com campos inválidos", async () => {
+    const response = await request(app).post("/api/tickets").send({
+      title: "",
+      description: "",
+      status: "INVALID_STATUS",
+    });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body).toHaveProperty("error");
+  });
 });

@@ -1,4 +1,5 @@
-const collaboratorService = require("./collaboratorController");
+// src/controllers/collaboratorController.js
+const collaboratorService = require("../services/collaboratorService");
 
 exports.getAllCollaborators = async (req, res) => {
   try {
