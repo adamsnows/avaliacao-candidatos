@@ -2,6 +2,8 @@
 
 O backend do projeto Comigotech é uma API RESTful desenvolvida em Node.js utilizando o framework Express e Prisma ORM para gerenciar usuários, colaboradores e tickets. A aplicação fornece funcionalidades de autenticação, manipulação de dados de colaboradores e usuários, e gerenciamento de tickets.
 
+### Endpoint: https://comigotech-backend-nhttpfvqia-uc.a.run.app
+
 ## Tecnologias
 
 **Node.js**: Ambiente de execução para JavaScript.
