@@ -42,6 +42,28 @@ const loginUser = async (username, password) => {
   return { token, role: user.role };
 };
 
+const registerCollaborator = async (name, email, password, role) => {
+  const existingCollaborator = await prisma.collaborator.findUnique({
+    where: { email },
+  });
+  if (existingCollaborator) {
+    throw new Error("Email already taken");
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const collaborator = await prisma.collaborator.create({
+    data: {
+      name,
+      email,
+      password: hashedPassword,
+      role,
+    },
+  });
+
+  return collaborator;
+};
+
 const verifyToken = (token) => {
   try {
     return jwt.verify(token, SECRET_KEY);
@@ -53,5 +75,6 @@ const verifyToken = (token) => {
 module.exports = {
   registerUser,
   loginUser,
+  registerCollaborator,
   verifyToken,
 };

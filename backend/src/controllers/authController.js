@@ -19,3 +19,20 @@ exports.login = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+exports.registerCollaborator = async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+    const collaborator = await authService.registerCollaborator(
+      name,
+      email,
+      password,
+      role
+    );
+    res
+      .status(201)
+      .json({ message: "Collaborator registered successfully", collaborator });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
