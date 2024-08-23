@@ -78,10 +78,8 @@ describe("Collaborator Routes", () => {
         name: "Updated Collaborator",
         email: "updatedcollaborator@example.com",
         password: "updatedpassword",
-        role: "MANAGER",
+        role: "ATTENDANT",
       });
-
-    console.log("update", response.body);
 
     expect(response.statusCode).toBe(200);
     expect(response.body.name).toBe("Updated Collaborator");
