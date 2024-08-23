@@ -1,69 +1,125 @@
-### Dicas
-- Documente
-- Mostre a sua linha de reciocínio
-- Trabalhe bem o seu README.md
-### Como você deverá desenvolver?
-1. Faça o fork deste projeto
-2. Realize as implementações de acordo com cada um dos níveis
-3. Faça pequenos commits
-4. Depois de sentir que fez o seu máximo, faça um PR para o repositório original.
-**OBSERVAÇÃO** : Faça até o nível que se sentir confortável.
-### Prazo de entrega
-Quanto mais cedo você enviar, mais tempo teremos para revisar seu teste com atenção. Sabemos que a rotina é agitada, por isso, faça no seu ritmo. Não desista! Envie o que conseguir.
-##  O Problema
-O stakeholder da Comigotech solicitou uma nova funcionalidade para o gerenciamento de tickets.
-Diariamente, nossa equipe precisa lidar com um grande volume de tickets, e o processo manual estava deixando todos sobrecarregados!
-Os tickets são registros digitais de solicitações, processos e problemas a serem resolvidos. Para a Comigotech, é essencial integrar essas informações no fluxo de trabalho para atender nossos clientes de forma eficiente.
-## Back-end
-### Nível 1 - Validação
-Implemente uma API utilizando ExpressJS que receba dados de um ticket.
-Se algum campo não estiver preenchido corretamente, deve-se retornar uma mensagem para o usuário mostrando qual o problema foi encontrado em qual campo.
-Se todos os dados estiverem validados. Apenas retorne todos os dados em um formato JSON.
-### Nível 2 - Persistência
-Utilize o banco de dados PostgreSQL e o ORM prisma.
-Crie a estrutura para o armazenamento dos tickets e colaboradores. (Onde os colaboradores estarão vinculados aos tickets que são criados, editados e deletados)
-Caso os dados estejam válidos, cadastre-os.
-Inclua também rotas para as outras operações:
-- Edição;
-- Exclusão;
-- Consulta;
-### Nível 3 - Autenticação
-Inclua um sistema de autenticação com JWT em todas as rotas.
-### Nível 4 - Gerenciamento de permissões
-Agora, crie um sistema de gerenciamento de permissões.
-Crie um novo cadastro de permissões. Esse cadastro deve armazenar: `login` e `password`.
-Os cargos são: `Admin` e `Atendente` onde o Admin será permissão para excluir os tickets.
-### Nível 5 - Testes
-Crie testes unitários, utilizando Jest ou Vitest, para cada operação. Para cada nova implementação a seguir, também deve-se criar os testes.
-Refatore o endpoint de autenticação para que sempre se gere JWTs se login e senha estiverem cadastrados no Banco de Dados.
-### Nível 6 - Infra
-Crie um `Dockerfile` para sua API.
-Crie um `docker-compose.yaml` para iniciar o seu projeto.
-Documente tudo o que foi feito até aqui:
-- Como preparar o ambiente;
-- Como instalar as dependência;
-- Como rodar o projeto;
-### Nível 7 - Cloud
-Deploy da aplicação em alguma plataforma Cloud. (AWS ou Google)
-### Nível 8 - Monitoramento e Observabilidade
-Implemente monitoramento e observabilidade abrangente, incluindo logging centralizado, métricas, alertas, tracing distribuído, e dashboards.
-### Nível 9 - Automação e Infraestrutura como Código
-Automatize e gerencie a infraestrutura da aplicação com infraestrutura como código, pipelines CI/CD, gerenciamento de configurações, e testes de infraestrutura.
-## Front-end
-### Nível 1 - Cadastro
-Crie a interface utilizando React com tailwind para cadastro dos tickets.
-É importante que sua interface previna o cadastro de campos vazios, ou que não estejam nas regras definidas anteriormente.
-### Nível 2 - Conectando na API
-Conecte a seu Front-end a API que foi criada, e faça o cadastro de um ticket refletir na sua API.
-### Nível 3 - Listando
-Agora faça um sistema de listagens de tickets.
-Além disso, coloque opções de editar e excluir (de acordo com o cargo do usuário).
-Todos os dados devem vir da API.
-### Nível 4 - Autenticação
-Implemente agora o sistema de login e senha para o usuário poder acessar apenas as suas permissões autenticadas.
-Caso o token expire, redirecione o usuário para a página de login.
-### Nível 5 - Testes
-Crie testes para sua aplicação Front-end.
+## Backend
 
-### Figma
-Link: https://www.figma.com/design/lxHF87g6eZnnvdCwZal4lA/Teste---Full-Stack?node-id=0-1&t=MWPKderBR0ZJrG25-0
+O backend do projeto Comigotech é uma API RESTful desenvolvida em Node.js utilizando o framework Express e Prisma ORM para gerenciar usuários, colaboradores e tickets. A aplicação fornece funcionalidades de autenticação, manipulação de dados de colaboradores e usuários, e gerenciamento de tickets.
+
+## Tecnologias
+
+**Node.js**: Ambiente de execução para JavaScript.
+
+**Express**: Framework para construção de APIs RESTful.
+
+**Prisma**: ORM para interagir com o banco de dados PostgreSQL.
+
+**PostgreSQL**: Banco de dados relacional.
+
+**Bcryptjs**: Biblioteca para hash de senhas.
+
+**Jsonwebtoken**: Biblioteca para criação e verificação de tokens JWT.
+
+**Supertest**: Biblioteca para testar endpoints HTTP.
+
+## Instalação
+
+Clone o repositório
+
+    git clone git@github.com:adamsnows/avaliacao-candidatos.git
+
+Navegue até o diretório do projeto
+
+    cd backend
+
+Instale as dependências
+
+    npm install
+
+**Configure o ambiente**
+
+Crie um arquivo .env na raiz do projeto e adicione as seguintes variáveis:
+
+    DATABASE_URL="postgresql://user:password@localhost:5432/ticket_management"
+    JWT_SECRET=your_jwt_secret
+
+**Substitua user, password, e localhost:5432/ticket_management com suas credenciais e URL do banco de dados PostgreSQL.**
+
+Execute as migrações do banco de dados
+
+    npx prisma migrate dev --name init
+
+Inicie o servidor
+
+    npm start
+
+Endpoints
+
+## Autenticação
+
+**POST /api/auth/register**
+
+_Registra um novo usuário._
+Requisição:
+
+    { "username": "string", "password": "string", "role": "ADMIN" // Ou "ATTENDANT" }
+
+Resposta:
+
+    { "id": "integer", "username": "string", "role": "ADMIN" // Ou "ATTENDANT" }
+
+**POST /api/auth/login**
+
+Faz login e retorna um token JWT.
+
+Requisição:
+
+    { "username": "string", "password": "string" }
+
+Resposta:
+
+    { "token": "string", "role": "ADMIN" // Ou "ATTENDANT" }
+
+## Colaboradores
+
+**GET /api/collaborators**
+
+_Lista todos os colaboradores._
+
+Requisição:
+
+Cabeçalhos: Authorization: Bearer <token>
+
+Resposta:
+
+    [ { "id": "integer", "name": "string", "email": "string", "role": "ATTENDANT", // Ou "ADMIN" "createdAt": "ISODate", "updatedAt": "ISODate" } ]
+
+**POST /api/collaborators**
+_Cria um novo colaborador._
+Requisição:
+
+    { "name": "string", "email": "string", "password": "string", "role": "ATTENDANT" // Ou "ADMIN" }
+
+Resposta:
+
+    { "id": "integer", "name": "string", "email": "string", "role": "ATTENDANT", // Ou "ADMIN" "createdAt": "ISODate", "updatedAt": "ISODate" }
+
+**PUT /api/collaborators/**
+
+_Atualiza um colaborador existente._
+
+Requisição:
+
+    { "name": "string", "email": "string", "password": "string", "role": "ATTENDANT" // Ou "ADMIN" }
+
+Resposta:
+
+    { "id": "integer", "name": "string", "email": "string", "role": "ATTENDANT", // Ou "ADMIN" "createdAt": "ISODate", "updatedAt": "ISODate" }
+
+**DELETE /api/collaborators/**
+
+_Deleta um colaborador existente._
+
+Requisição:
+
+Cabeçalhos: Authorization: Bearer <token>
+
+Resposta:
+
+    { "message": "Collaborator deleted successfully" }
