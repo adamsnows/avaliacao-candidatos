@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --verbose",
     "start": "npx nodemon server.js",
     "clear": "node src/scripts/clearDatabase.js"
   },

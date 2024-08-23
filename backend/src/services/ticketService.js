@@ -8,7 +8,11 @@ const validateTicketData = (data) => {
   const ticketSchema = Joi.object({
     title: Joi.string().required(),
     description: Joi.string().required(),
-    collaboratorId: Joi.number().integer().required(),
+    status: Joi.string()
+      .valid("PENDING", "IN_PROGRESS", "COMPLETED")
+      .required(),
+    userId: Joi.number().required(),
+    collaboratorId: Joi.number().required(),
   });
 
   const { error, value } = ticketSchema.validate(data);

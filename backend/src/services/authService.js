@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const prisma = new PrismaClient();
-const SECRET_KEY = process.env.JWT_SECRET || "your-secret-key";
+const SECRET_KEY = process.env.JWT_SECRET || "ticket_managementz";
 
 const registerUser = async (username, password, role) => {
   const existingUser = await prisma.user.findUnique({ where: { username } });
