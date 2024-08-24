@@ -38,7 +38,7 @@ Instale as dependências
 
 Crie um arquivo .env na raiz do projeto e adicione as seguintes variáveis:
 
-    DATABASE_URL="postgresql://user:password@localhost:5432/ticket_management"
+    DATABASE_URL="postgresql://postgres:adamlol123@34.72.83.29:5432/postgres"
     JWT_SECRET=your_jwt_secret
 
 **Substitua user, password, e localhost:5432/ticket_management com suas credenciais e URL do banco de dados PostgreSQL.**

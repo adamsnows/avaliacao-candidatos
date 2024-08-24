@@ -19,7 +19,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DATABASE_URL: postgres://youruser:yourpassword@db:5432/comigotech
+      DATABASE_URL: postgresql://postgres:adamlol123@34.72.83.29:5432/postgres
       JWT_SECRET: your_jwt_secret
     depends_on:
       - db
