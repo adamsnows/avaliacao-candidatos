@@ -10,7 +10,7 @@ export type BreadcrumbData = {
 const BreadcrumbComponent = ({ breadcrumb, className }: BreadcrumbData) => {
   return (
     <>
-      <div className={cn("my-2 mx-6", className)}>
+      <div className={cn("my-2", className)}>
         <Breadcrumb separator="" separatorVariant="arrow" className="flex-wrap">
           {breadcrumb.map((item) => (
             <Breadcrumb.Item
@@ -22,7 +22,7 @@ const BreadcrumbComponent = ({ breadcrumb, className }: BreadcrumbData) => {
           ))}
         </Breadcrumb>
       </div>
-      <div className="border-b border-gray-300 mx-6" />
+      <div className="border-b border-gray-300" />
     </>
   );
 };
