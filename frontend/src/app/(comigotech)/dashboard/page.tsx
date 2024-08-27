@@ -1,6 +1,7 @@
 "use client";
 
 import BreadcrumbComponent from "@/components/Breadcrumbs";
+import TicketTable from "@/components/Table";
 import ToolsComponent from "@/components/Tools";
 import { useSession } from "next-auth/react";
 import { FaHouse } from "react-icons/fa6";
@@ -27,6 +28,7 @@ const Dashboard = () => {
     <>
       <BreadcrumbComponent breadcrumb={pageHeader.breadcrumb} />
       <ToolsComponent />
+      <TicketTable />
     </>
   );
 };

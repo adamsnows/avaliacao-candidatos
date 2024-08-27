@@ -81,7 +81,7 @@ const ToolsComponent = () => {
         selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0 w-[120px]`}
         className={` ${getTextColor(
           orderBy
-        )} max-w-[220px] flex gap-0 items-center border-none`}
+        )} ms-4 max-w-[220px] flex gap-0 items-center border-none`}
       />
 
       <Select
