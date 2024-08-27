@@ -33,11 +33,11 @@ export default async function RootLayout({
       >
         <AuthProvider session={session}>
           <Toaster position="top-center" />
-          <NextTopLoader color="#ff6347" speed={100} />
+          <NextTopLoader color="#fff" speed={200} />
 
           <RedirectOnLogin>
             <Header />
-            {children}
+            <div className="mx-6">{children}</div>
           </RedirectOnLogin>
         </AuthProvider>
       </body>
