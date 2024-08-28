@@ -10,6 +10,7 @@ import { MdViewArray } from "react-icons/md";
 import { MdViewColumn } from "react-icons/md";
 
 import { useState } from "react";
+import { useModal } from "@/contexts/ModalContext";
 
 const ToolsComponent = () => {
   const [period, setPeriod] = useState<string | null>(null);
@@ -19,6 +20,12 @@ const ToolsComponent = () => {
   const [reason, setReason] = useState<string | null>(null);
   const [client, setClient] = useState<string | null>(null);
   const [vehicle, setVehicle] = useState<string | null>(null);
+
+  const { openModal } = useModal();
+
+  const handleOpenModal = () => {
+    openModal(<div>Conteúdo do Modal Personalizado</div>);
+  };
 
   const periodOptions = [
     { label: "Hoje", value: "today" },
@@ -48,7 +55,7 @@ const ToolsComponent = () => {
 
   return (
     <div className="mt-6 flex gap-4 items-center h-[30px]">
-      <Button className="bg-primary flex gap-4 px-4">
+      <Button className="bg-primary flex gap-4 px-4" onClick={handleOpenModal}>
         Abrir ticket <FaPlus />
       </Button>
 

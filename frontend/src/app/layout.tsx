@@ -8,6 +8,7 @@ import { authOptions } from "./api/auth/[...nextauth]/auth-options";
 import AuthProvider from "./api/auth/[...nextauth]/auth-provider";
 import Header from "@/components/Header";
 import RedirectOnLogin from "@/components/Redirect";
+import { ModalProvider } from "@/contexts/ModalContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,13 +33,15 @@ export default async function RootLayout({
         className={`flex min-h-screen flex-col bg-[#f1f5f9] ${inter.className}`}
       >
         <AuthProvider session={session}>
-          <Toaster position="top-center" />
-          <NextTopLoader color="#fff" speed={200} />
+          <ModalProvider>
+            <Toaster position="top-center" />
+            <NextTopLoader color="#fff" speed={200} />
 
-          <RedirectOnLogin>
-            <Header />
-            <div className="mx-6">{children}</div>
-          </RedirectOnLogin>
+            <RedirectOnLogin>
+              <Header />
+              <div className="mx-6">{children}</div>
+            </RedirectOnLogin>
+          </ModalProvider>
         </AuthProvider>
       </body>
     </html>
