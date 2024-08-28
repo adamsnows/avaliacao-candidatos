@@ -20,18 +20,6 @@ model User {
   updatedAt  DateTime    @updatedAt
 }
 
-model Collaborator {
-  id         Int         @id @default(autoincrement())
-  name       String
-  email      String      @unique
-  password   String
-  role       Role
-  tickets    Ticket[]    @relation("CollaboratorTickets")
-
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-}
-
 model Ticket {
   id             Int          @id @default(autoincrement())
   title          String
@@ -39,8 +27,13 @@ model Ticket {
   status         TicketStatus @default(PENDING)
   userId         Int?
   user           User?        @relation("UserTickets", fields: [userId], references: [id])
-  collaboratorId Int?
-  collaborator   Collaborator? @relation("CollaboratorTickets", fields: [collaboratorId], references: [id])
+
+  contact        Boolean      @default(false) // Se houve contato
+  contactType    String?
+  intention      TicketIntention
+  vehicles       String[]
+  reason         TicketReason
+  additionalInfo String?
 
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
@@ -56,4 +49,17 @@ enum TicketStatus {
   IN_PROGRESS
   RESOLVED
   CLOSED
+}
+
+enum TicketIntention {
+  OPERATIONAL
+  RELATIONSHIP
+  SUPPORT
+  SELLING
+}
+
+enum TicketReason {
+  REASON_1
+  REASON_2
+  REASON_3
 }

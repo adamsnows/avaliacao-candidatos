@@ -1,18 +1,24 @@
 const { PrismaClient } = require("@prisma/client");
+const Joi = require("joi");
 
 const prisma = new PrismaClient();
 
 const validateTicketData = (data) => {
-  const Joi = require("joi");
-
   const ticketSchema = Joi.object({
     title: Joi.string().required(),
     description: Joi.string().required(),
     status: Joi.string()
-      .valid("PENDING", "IN_PROGRESS", "COMPLETED")
+      .valid("PENDING", "IN_PROGRESS", "RESOLVED", "CLOSED")
       .required(),
     userId: Joi.number().required(),
-    collaboratorId: Joi.number().required(),
+    contact: Joi.boolean().optional(),
+    contactType: Joi.string().optional(),
+    intention: Joi.string()
+      .valid("OPERATIONAL", "RELATIONSHIP", "SUPPORT", "SELLING")
+      .required(),
+    vehicles: Joi.array().items(Joi.string()).optional(),
+    reason: Joi.string().valid("REASON_1", "REASON_2", "REASON_3").required(),
+    additionalInfo: Joi.string().optional(),
   });
 
   const { error, value } = ticketSchema.validate(data);
@@ -29,9 +35,14 @@ const createTicket = async (ticketData) => {
     data: {
       title: validatedData.title,
       description: validatedData.description,
-      collaborator: {
-        connect: { id: validatedData.collaboratorId },
-      },
+      status: validatedData.status,
+      user: { connect: { id: validatedData.userId } },
+      contact: validatedData.contact,
+      contactType: validatedData.contactType,
+      intention: validatedData.intention,
+      vehicles: validatedData.vehicles,
+      reason: validatedData.reason,
+      additionalInfo: validatedData.additionalInfo,
     },
   });
 
@@ -46,9 +57,14 @@ const updateTicket = async (id, ticketData) => {
     data: {
       title: validatedData.title,
       description: validatedData.description,
-      collaborator: {
-        connect: { id: validatedData.collaboratorId },
-      },
+      status: validatedData.status,
+      user: { connect: { id: validatedData.userId } },
+      contact: validatedData.contact,
+      contactType: validatedData.contactType,
+      intention: validatedData.intention,
+      vehicles: validatedData.vehicles,
+      reason: validatedData.reason,
+      additionalInfo: validatedData.additionalInfo,
     },
   });
 
@@ -66,7 +82,6 @@ const deleteTicket = async (id) => {
 const getTicket = async (id) => {
   const ticket = await prisma.ticket.findUnique({
     where: { id: Number(id) },
-    include: { collaborator: true },
   });
 
   if (!ticket) {
@@ -77,9 +92,7 @@ const getTicket = async (id) => {
 };
 
 const getAllTickets = async () => {
-  return await prisma.ticket.findMany({
-    include: { collaborator: true },
-  });
+  return await prisma.ticket.findMany();
 };
 
 module.exports = {
