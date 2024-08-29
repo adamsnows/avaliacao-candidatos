@@ -38,7 +38,6 @@ export default async function RootLayout({
             <NextTopLoader color="#fff" speed={200} />
 
             <RedirectOnLogin>
-              <Header />
               <div className="mx-6">{children}</div>
             </RedirectOnLogin>
           </ModalProvider>

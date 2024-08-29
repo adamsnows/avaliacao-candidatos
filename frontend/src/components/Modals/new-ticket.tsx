@@ -15,6 +15,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { CiCircleInfo } from "react-icons/ci";
 import { MdDone } from "react-icons/md";
+import toast from "react-hot-toast";
 
 const options = [
   {
@@ -55,11 +56,62 @@ const NewTicketModal = () => {
   const [reason, setReason] = useState("");
   const [vehicle, setVehicle] = useState<string[]>([]);
 
-  const handleNext = () => {
+  const validateFields = () => {
+    let valid = true;
+
+    if (!contactValue) {
+      toast.error("Campo 'Houve contato' é obrigatório.");
+      valid = false;
+    }
+
+    if (!contactType) {
+      toast.error("Campo 'Tipo de contato' é obrigatório.");
+      valid = false;
+    }
+
+    if (!intention) {
+      toast.error("Campo 'Intuito' é obrigatório.");
+      valid = false;
+    }
+
+    if (activeIndex === 2 && vehicle.length === 0) {
+      toast.error("Campo 'Veículo(s)' é obrigatório.");
+      valid = false;
+    }
+
+    if (activeIndex === 2 && reason.length === 0) {
+      toast.error("Campo 'Motivo' é obrigatório.");
+      valid = false;
+    }
+
+    return valid;
+  };
+
+  const handleNext = async () => {
+    if (!validateFields()) return;
+
     if (activeIndex < 2) {
       setActiveIndex((prevIndex) => prevIndex + 1);
     } else {
-      console.log("Criar ticket");
+      try {
+        const updatedTicket = {
+          status: status.value, // Ajuste aqui para usar apenas o valor
+          userId: session?.user?.id,
+          contact: contactValue === "yes",
+          contactType,
+          intention,
+          vehicles: vehicle,
+          reason,
+          additionalInfo: additionalInfo,
+        };
+
+        await api.put(`/tickets/${initialData.id}`, updatedTicket);
+        onUpdate(updatedTicket);
+        toast.success("Ticket atualizado com sucesso");
+        closeModal();
+      } catch (error) {
+        toast.error("Erro ao atualizar o ticket");
+      }
     }
   };
 

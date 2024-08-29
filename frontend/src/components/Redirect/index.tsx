@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
+import Header from "../Header";
 
 export default function RedirectOnLogin({
   children,
@@ -28,5 +29,10 @@ export default function RedirectOnLogin({
 
   if (!checkComplete) return null;
 
-  return <>{children}</>;
+  return (
+    <div>
+      {session && <Header />}
+      {children}
+    </div>
+  );
 }
