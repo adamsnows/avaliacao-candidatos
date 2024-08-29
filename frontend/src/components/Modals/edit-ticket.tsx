@@ -15,10 +15,10 @@ import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { CiCircleInfo } from "react-icons/ci";
 import { MdDone } from "react-icons/md";
-import api from "@/app/api/axios/api";
-import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/modal-context";
+import { useTickets } from "@/contexts/ticket-context";
+import toast from "react-hot-toast";
 
 const contactOptions = [
   { value: "true", title: "Sim", description: "O cliente entrou em contato" },
@@ -61,18 +61,21 @@ interface EditTicketModalProps {
     reason?: string;
     additionalInfo?: string;
   };
-  onUpdate: (ticket: any) => void;
 }
 
-const EditTicketModal = ({ initialData, onUpdate }: EditTicketModalProps) => {
+const EditTicketModal = ({ initialData }: EditTicketModalProps) => {
   const { data: session } = useSession();
   const { closeModal } = useModal();
+  const { updateTicket } = useTickets();
   const [activeIndex, setActiveIndex] = useState(0);
   const [status, setStatus] = useState(initialData.status || "PENDING");
   const [contact, setContact] = useState(
     initialData.contact ? "true" : "false"
   );
-  const [contactType, setContactType] = useState(initialData.contactType);
+  const [contactType, setContactType] = useState({
+    label: "Tipo de contato",
+    value: "contact-1",
+  });
   const [intention, setIntention] = useState(initialData.intention);
   const [vehicles, setVehicles] = useState<string[]>(
     initialData.vehicles || []
@@ -95,16 +98,14 @@ const EditTicketModal = ({ initialData, onUpdate }: EditTicketModalProps) => {
           status,
           userId: session?.user?.id,
           contact: contact === "true",
-          contactType,
+          contactType: contactType.value,
           intention,
           vehicles,
           reason,
           additionalInfo,
         };
 
-        await api.put(`/tickets/${initialData.id}`, updatedTicket);
-        onUpdate(updatedTicket);
-        toast.success("Ticket atualizado com sucesso");
+        await updateTicket(initialData.id, updatedTicket);
         closeModal();
       } catch (error) {
         toast.error("Erro ao atualizar o ticket");
@@ -245,22 +246,29 @@ const EditTicketModal = ({ initialData, onUpdate }: EditTicketModalProps) => {
           </Tab.Panel>
         </Tab.Panels>
       </Tab>
-
-      <div className="flex justify-between">
-        {activeIndex > 0 && (
-          <Button
-            variant="outline"
-            className="mt-4 flex gap-4 border-primary text-primary"
-            onClick={handlePrevious}
-          >
-            <FaArrowLeft />
-            <span>Voltar</span>
-          </Button>
-        )}
-
-        <Button className="ms-auto mt-4 flex gap-4" onClick={handleNext}>
-          <span>{activeIndex < 3 ? "Avançar" : "Atualizar"}</span>
-          {activeIndex < 3 ? <FaArrowRight /> : <MdDone className="text-lg" />}
+      <div className="flex justify-between gap-4 mt-6">
+        <Button
+          type="button"
+          variant="outline"
+          className="w-1/2"
+          onClick={() => handlePrevious()}
+          disabled={activeIndex === 0}
+        >
+          <FaArrowLeft className="w-4" />
+          Voltar
+        </Button>
+        <Button type="button" className="w-1/2" onClick={() => handleNext()}>
+          {activeIndex < 3 ? (
+            <>
+              Próximo
+              <FaArrowRight className="w-4" />
+            </>
+          ) : (
+            <>
+              Concluir
+              <MdDone className="w-4" />
+            </>
+          )}
         </Button>
       </div>
     </div>

@@ -5,46 +5,54 @@ import { MdOutlineEdit } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
 import EditTicketModal from "../Modals/edit-ticket";
 import { useModal } from "@/contexts/modal-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTickets } from "@/contexts/ticket-context";
 
 const TicketTable = () => {
-  const { tickets, deleteTicket, updateTicket } = useTickets();
+  const { filteredTickets, fetchTickets, deleteTicket, updateTicket } =
+    useTickets();
   const { openModal } = useModal();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [ticketToDelete, setTicketToDelete] = useState(null);
+  const [ticketToDelete, setTicketToDelete] = useState<number | null>(null);
 
-  const handleEditClick = (ticket) => {
-    openModal(<EditTicketModal initialData={ticket} onUpdate={updateTicket} />);
+  useEffect(() => {
+    fetchTickets();
+  }, []);
+
+  const handleEditClick = (ticket: any) => {
+    openModal(<EditTicketModal initialData={ticket} />);
   };
 
-  const handleDeleteClick = (ticketId) => {
+  const handleDeleteClick = (ticketId: number) => {
     setTicketToDelete(ticketId);
     setIsModalOpen(true);
   };
 
   const confirmDeleteTicket = async () => {
-    if (!ticketToDelete) return;
+    if (ticketToDelete === null) return;
     await deleteTicket(ticketToDelete);
     setIsModalOpen(false);
     setTicketToDelete(null);
   };
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
+  const formatDate = (date?: string) => {
+    return date
+      ? new Date(date).toLocaleDateString("pt-BR", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        })
+      : "N/A";
   };
 
-  const calculateDueDate = (createdAt) => {
+  const calculateDueDate = (createdAt?: string) => {
+    if (!createdAt) return "N/A";
     const date = new Date(createdAt);
     date.setDate(date.getDate() + 7);
-    return formatDate(date);
+    return formatDate(date.toISOString());
   };
 
-  if (!tickets) {
+  if (!filteredTickets) {
     return <Loader size="lg" className="mt-10 mx-auto" />;
   }
 
@@ -56,7 +64,6 @@ const TicketTable = () => {
             <Table.Head>ID</Table.Head>
             <Table.Head>Tipo</Table.Head>
             <Table.Head>Motivo</Table.Head>
-            <Table.Head>Descrição</Table.Head>
             <Table.Head>Cliente</Table.Head>
             <Table.Head>Veículo</Table.Head>
             <Table.Head>Data da abertura</Table.Head>
@@ -66,12 +73,11 @@ const TicketTable = () => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {tickets.map((ticket) => (
+          {filteredTickets.map((ticket) => (
             <Table.Row key={ticket.id} className="bg-white">
               <Table.Cell>#{ticket.id}</Table.Cell>
-              <Table.Cell>{ticket.intention}</Table.Cell>
+              <Table.Cell>{ticket.intention || "N/A"}</Table.Cell>
               <Table.Cell>{ticket.reason || "N/A"}</Table.Cell>
-              <Table.Cell>{ticket.description}</Table.Cell>
               <Table.Cell>{ticket.userId || "N/A"}</Table.Cell>
               <Table.Cell>{ticket.vehicles.join(", ") || "N/A"}</Table.Cell>
               <Table.Cell>{formatDate(ticket.createdAt)}</Table.Cell>
@@ -94,8 +100,8 @@ const TicketTable = () => {
         </Table.Body>
       </Table>
       <div className="mt-6 text-xs text-gray-500 flex justify-center">
-        Exibindo {tickets.length} de {tickets.length} do total de{" "}
-        {tickets.length} registros
+        Exibindo {filteredTickets.length} de {filteredTickets.length} do total
+        de {filteredTickets.length} registros
       </div>
 
       {isModalOpen && (
@@ -108,7 +114,7 @@ const TicketTable = () => {
             <div className="flex gap-4 w-full">
               <Button
                 className="bg-blue-500 text-white w-full"
-                onClick={confirmDeleteTicket} // Corrigido aqui
+                onClick={confirmDeleteTicket}
               >
                 Sim
               </Button>
