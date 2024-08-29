@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ring-muted {
+  --tw-ring-opacity: 0 !important;
+  --tw-ring-color: transparent !important;
+}

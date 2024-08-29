@@ -16,7 +16,9 @@ export default function RedirectOnLogin({
 
   useEffect(() => {
     if (status !== "loading") {
-      if (session && pathname === "/") {
+      if (!session && pathname !== "/") {
+        router.push("/");
+      } else if (session && pathname === "/") {
         router.push("/dashboard");
       } else {
         setCheckComplete(true);

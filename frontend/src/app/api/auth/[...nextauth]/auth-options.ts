@@ -14,19 +14,19 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         try {
           const response = await api.post("/auth/login", {
-            username: credentials?.email,
+            email: credentials?.email,
             password: credentials?.password,
           });
 
-          const { token } = response.data;
+          const { id, username, email, token, role } = response.data;
 
-          if (typeof token === "string") {
-            // Assegura que token é uma string
+          if (token) {
             return {
-              id: "1", // Placeholder
-              name: "Default User", // Placeholder
-              email: credentials?.email,
-              accessToken: token,
+              id: id.toString(),
+              username: username?.toString(),
+              email: email?.toString(),
+              accessToken: token.toString(),
+              role: role?.toString(),
             };
           }
 
@@ -40,15 +40,23 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if (user?.accessToken) {
-        token.accessToken = user.accessToken;
+      if (user) {
+        token.id = user.id as string;
+        token.username = user.username as string;
+        token.email = user.email as string;
+        token.accessToken = user.accessToken as string;
+        token.role = user.role as string;
       }
       return token;
     },
     async session({ session, token }) {
-      if (typeof token.accessToken === "string") {
-        session.accessToken = token.accessToken;
-      }
+      session.user = {
+        id: token.id as string,
+        username: token.username as string,
+        email: token.email as string,
+        role: token.role as string,
+      };
+      session.accessToken = token.accessToken as string;
       return session;
     },
   },

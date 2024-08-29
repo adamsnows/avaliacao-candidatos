@@ -8,7 +8,7 @@ import { authOptions } from "./api/auth/[...nextauth]/auth-options";
 import AuthProvider from "./api/auth/[...nextauth]/auth-provider";
 import Header from "@/components/Header";
 import RedirectOnLogin from "@/components/Redirect";
-import { ModalProvider } from "@/contexts/ModalContext";
+import { ModalProvider } from "@/contexts/modal-context";
 
 const inter = Inter({ subsets: ["latin"] });
 

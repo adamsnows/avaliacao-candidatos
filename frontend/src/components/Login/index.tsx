@@ -13,6 +13,7 @@ interface LoginFormInputs {
 }
 
 const LoginComponent = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -21,6 +22,8 @@ const LoginComponent = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+    setIsLoading(true);
+
     const result = await signIn("credentials", {
       redirect: false,
       email: data.email,
@@ -30,8 +33,9 @@ const LoginComponent = () => {
 
     if (result?.error) {
       setErrorMessage("Email ou senha incorreto.");
+      setIsLoading(false);
     } else if (result?.ok) {
-      window.location.href = "/dashboard"; //
+      window.location.href = "/dashboard";
     }
   };
 
@@ -75,7 +79,7 @@ const LoginComponent = () => {
 
         {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
 
-        <Button className="bg-primary" type="submit">
+        <Button className="bg-primary" type="submit" isLoading={isLoading}>
           Entrar
         </Button>
       </form>

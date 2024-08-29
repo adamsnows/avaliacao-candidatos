@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import { IoClose } from "react-icons/io5";
 
 interface ModalContextType {
   isOpen: boolean;
@@ -49,24 +50,35 @@ const Modal = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <div
-        className={`fixed inset-0 blur-sm opacity-10 z-40 transition-opacity duration-300 ${
-          children ? "opacity-50" : "opacity-0 pointer-events-none"
-        }`}
+        style={{
+          position: "fixed",
+          inset: "0",
+          backdropFilter: "blur(35px)",
+          backgroundColor: "rgba(0, 0, 0, 0.9)",
+          opacity: children ? "0.5" : "0",
+          zIndex: 40,
+          transition: "opacity 0.3s",
+          pointerEvents: children ? "auto" : "none",
+        }}
         onClick={closeModal}
       />
 
       <div
-        className={`fixed right-0 top-0 h-full bg-white shadow-lg z-50 w-[550px] transform transition-transform duration-300 ${
+        className={`fixed right-0 top-0 h-full bg-white shadow-lg z-50 transform transition-transform duration-300 ${
           children ? "translate-x-0" : "translate-x-full"
         }`}
+        style={{ width: 600, zIndex: 50 }}
       >
-        <div className="p-6 relative">
-          <button className="absolute top-4 left-0 ms-10" onClick={closeModal}>
-            Fechar
-          </button>
+        <div className="p-6 flex flex-col gap-4">
           <div className="py-4">{children}</div>
         </div>
       </div>
+
+      <IoClose
+        className="fixed top-4 z-50 cursor-pointer text-white text-xl"
+        style={{ right: 610 }}
+        onClick={closeModal}
+      />
     </>
   );
 };

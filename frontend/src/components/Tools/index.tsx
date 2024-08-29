@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Input, Select } from "rizzui";
+import { Button, Input, Select, Tab } from "rizzui";
 import { FaPlus } from "react-icons/fa6";
 import { LuKanbanSquare } from "react-icons/lu";
 
@@ -10,7 +10,8 @@ import { MdViewArray } from "react-icons/md";
 import { MdViewColumn } from "react-icons/md";
 
 import { useState } from "react";
-import { useModal } from "@/contexts/ModalContext";
+import { useModal } from "@/contexts/modal-context";
+import NewTicketModal from "../Modals/new-ticket";
 
 const ToolsComponent = () => {
   const [period, setPeriod] = useState<string | null>(null);
@@ -24,7 +25,7 @@ const ToolsComponent = () => {
   const { openModal } = useModal();
 
   const handleOpenModal = () => {
-    openModal(<div>Conteúdo do Modal Personalizado</div>);
+    openModal(<NewTicketModal />);
   };
 
   const periodOptions = [
@@ -55,7 +56,10 @@ const ToolsComponent = () => {
 
   return (
     <div className="mt-6 flex gap-4 items-center h-[30px]">
-      <Button className="bg-primary flex gap-4 px-4" onClick={handleOpenModal}>
+      <Button
+        className="bg-primary flex gap-4 px-4 text-nowrap"
+        onClick={handleOpenModal}
+      >
         Abrir ticket <FaPlus />
       </Button>
 

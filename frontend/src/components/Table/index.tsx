@@ -1,8 +1,44 @@
-import { Badge, Table } from "rizzui";
+"use client";
+
+import { Badge, Loader, Table } from "rizzui";
 import { MdOutlineEdit } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
+import EditTicketModal from "../Modals/edit-ticket";
+import { useModal } from "@/contexts/modal-context";
+import { useEffect, useState } from "react";
+import api from "@/app/api/axios/api";
+import toast from "react-hot-toast";
 
-const TicketTable = () => {
+const TicketTable = ({ initialTickets }) => {
+  const { openModal } = useModal();
+  const [tickets, setTickets] = useState(initialTickets);
+
+  useEffect(() => {
+    setTickets(initialTickets);
+  }, [initialTickets]);
+
+  const handleEditClick = (ticket) => {
+    openModal(<EditTicketModal initialData={ticket} onUpdate={updateTicket} />);
+  };
+
+  const updateTicket = async () => {
+    try {
+      const response = await api.get("/tickets");
+      setTickets(response.data);
+
+      setTimeout(() => {
+        toast.success("Tickets atualizados com sucesso");
+      }, 2000);
+    } catch (error) {
+      console.error("Erro ao atualizar o ticket:", error);
+      toast.error("Erro ao atualizar o ticket");
+    }
+  };
+
+  if (!tickets) {
+    return <Loader size="lg" className="mt-10 mx-auto" />;
+  }
+
   return (
     <div className="mt-6">
       <Table className="text-gray-800 font-light text-sm">
@@ -21,27 +57,35 @@ const TicketTable = () => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          <Table.Row className="bg-white">
-            <Table.Cell>#110</Table.Cell>
-            <Table.Cell>Suporte</Table.Cell>
-            <Table.Cell>Incidente</Table.Cell>
-            <Table.Cell>Veículos sem comunicação</Table.Cell>
-            <Table.Cell>Veículos sem comunicação</Table.Cell>
-            <Table.Cell>Veículos 2, Veículos 6</Table.Cell>
-            <Table.Cell>02/07/2023</Table.Cell>
-            <Table.Cell>05/05/2023</Table.Cell>
-            <Table.Cell>
-              <Badge>À fazer</Badge>
-            </Table.Cell>
-            <Table.Cell className="flex items-center justify-end gap-2 mt-1">
-              <MdOutlineEdit className="cursor-pointer text-lg" />
-              <FaRegTrashAlt className="text-red-500 cursor-pointer text-lg" />
-            </Table.Cell>
-          </Table.Row>
+          {tickets.map((ticket) => (
+            <Table.Row key={ticket.id} className="bg-white">
+              <Table.Cell>#{ticket.id}</Table.Cell>
+              <Table.Cell>{ticket.intention}</Table.Cell>
+              <Table.Cell>{ticket.reason || "N/A"}</Table.Cell>
+              <Table.Cell>{ticket.description}</Table.Cell>
+              <Table.Cell>{ticket.userId || "N/A"}</Table.Cell>
+              <Table.Cell>{ticket.vehicles.join(", ") || "N/A"}</Table.Cell>
+              <Table.Cell>
+                {new Date(ticket.createdAt).toLocaleDateString()}
+              </Table.Cell>
+              <Table.Cell>{"N/A"}</Table.Cell>
+              <Table.Cell>
+                <Badge>{ticket.status}</Badge>
+              </Table.Cell>
+              <Table.Cell className="flex items-center justify-end gap-2 mt-1">
+                <MdOutlineEdit
+                  className="cursor-pointer text-lg"
+                  onClick={() => handleEditClick(ticket)}
+                />
+                <FaRegTrashAlt className="text-red-500 cursor-pointer text-lg" />
+              </Table.Cell>
+            </Table.Row>
+          ))}
         </Table.Body>
       </Table>
       <div className="mt-6 text-xs text-gray-500 flex justify-center">
-        Exibindo 3 de 3 do total de 3 registros
+        Exibindo {tickets.length} de {tickets.length} do total de{" "}
+        {tickets.length} registros
       </div>
     </div>
   );
