@@ -27,7 +27,7 @@ model Ticket {
   userId         Int?
   user           User?        @relation("UserTickets", fields: [userId], references: [id])
 
-  contact        Boolean      @default(false) // Se houve contato
+  contact        Boolean      @default(false)
   contactType    String?
   intention      TicketIntention
   vehicles       String[]
