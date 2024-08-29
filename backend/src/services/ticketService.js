@@ -5,8 +5,6 @@ const prisma = new PrismaClient();
 
 const validateTicketData = (data) => {
   const ticketSchema = Joi.object({
-    title: Joi.string().required(),
-    description: Joi.string().required(),
     status: Joi.string()
       .valid("PENDING", "IN_PROGRESS", "RESOLVED", "CLOSED")
       .required(),
