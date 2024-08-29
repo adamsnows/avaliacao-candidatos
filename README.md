@@ -51,77 +51,98 @@ Inicie o servidor
 
     npm start
 
-Endpoints
+## Endpoints
 
-## Autenticação
+/api/auth -> POST Login / Register <br/>
+/api/tickets -> GET, PUT, DELETE, POST Criação de tickets, etc <br/>
+/api/users -> GET Todos usuários
 
-**POST /api/auth/register**
+# Comigotech Frontend
 
-_Registra um novo usuário._
-Requisição:
+O frontend do projeto Comigotech é uma aplicação desenvolvida utilizando React e TailwindCSS. A aplicação interage com a API RESTful do backend para gerenciar e visualizar tickets, permitindo aos usuários realizar operações de criação, atualização, exclusão e filtragem de tickets.
 
-    { "username": "string", "password": "string", "role": "ADMIN" // Ou "ATTENDANT" }
+### Endpoint da API
 
-Resposta:
+A aplicação se comunica com a API RESTful hospedada no seguinte endpoint:
 
-    { "id": "integer", "username": "string", "role": "ADMIN" // Ou "ATTENDANT" }
+- **API Base URL**: [https://comigotech-backend-nhttpfvqia-uc.a.run.app](https://comigotech-backend-nhttpfvqia-uc.a.run.app)
 
-**POST /api/auth/login**
+## Tecnologias
 
-Faz login e retorna um token JWT.
+**React**: Biblioteca para construção de interfaces de usuário.
 
-Requisição:
+**TailwindCSS**: Framework para estilização e design responsivo.
 
-    { "username": "string", "password": "string" }
+**Axios**: Biblioteca para fazer requisições HTTP.
 
-Resposta:
+**React Hook Form**: Biblioteca para gerenciamento de formulários.
 
-    { "token": "string", "role": "ADMIN" // Ou "ATTENDANT" }
+**React Hot Toast**: Biblioteca para exibição de notificações.
 
-## Colaboradores
+**RizzUI**: Biblioteca de componentes UI.
 
-**GET /api/collaborators**
+**TypeScript**: Linguagem de programação que adiciona tipos estáticos ao JavaScript.
 
-_Lista todos os colaboradores._
+## Instalação
 
-Requisição:
+Clone o repositório
 
-Cabeçalhos: Authorization: Bearer <token>
+```bash
+git clone git@github.com:adamsnows/avaliacao-candidatos.git
+```
 
-Resposta:
+Navegue até o diretório do projeto
 
-    [ { "id": "integer", "name": "string", "email": "string", "role": "ATTENDANT", // Ou "ADMIN" "createdAt": "ISODate", "updatedAt": "ISODate" } ]
+```bash
+cd frontend
+```
 
-**POST /api/collaborators**
-_Cria um novo colaborador._
-Requisição:
+Instale as dependências
 
-    { "name": "string", "email": "string", "password": "string", "role": "ATTENDANT" // Ou "ADMIN" }
+```bash
+npm install
+```
 
-Resposta:
+Navegue até o diretório do projeto
 
-    { "id": "integer", "name": "string", "email": "string", "role": "ATTENDANT", // Ou "ADMIN" "createdAt": "ISODate", "updatedAt": "ISODate" }
+```bash
+cd frontend
+```
 
-**PUT /api/collaborators/**
+Configure o ambiente
 
-_Atualiza um colaborador existente._
+Crie um arquivo .env.local na raiz do projeto e adicione as seguintes variáveis:
 
-Requisição:
+```bash
+NEXTAUTH_SECRET="N1be+jf03Wu1mhGkp7JhSBfLlBq8dxBfp7qg+QhxW8o="
+NEXTAUTH_URL=http://localhost:3000
+```
 
-    { "name": "string", "email": "string", "password": "string", "role": "ATTENDANT" // Ou "ADMIN" }
+Inicie o servidor de desenvolvimento
 
-Resposta:
+```bash
+npm run dev
+```
 
-    { "id": "integer", "name": "string", "email": "string", "role": "ATTENDANT", // Ou "ADMIN" "createdAt": "ISODate", "updatedAt": "ISODate" }
+## Funcionalidades
 
-**DELETE /api/collaborators/**
+- **Tela de Criação de Ticket**: Permite aos usuários criar novos tickets com um formulário dividido em várias etapas.
+- **Listagem de Tickets**: Exibe todos os tickets com a opção de filtrar e ordenar.
+- **Atualização e Exclusão de Tickets**: Permite atualizar ou excluir tickets existentes.
+- **Autenticação**: Implementa a funcionalidade de login utilizando a API de autenticação.
 
-_Deleta um colaborador existente._
+## Estrutura do Projeto
 
-Requisição:
+O projeto está organizado da seguinte forma:
 
-Cabeçalhos: Authorization: Bearer <token>
+- **`/components`**: Contém componentes reutilizáveis da aplicação.
+- **`/contexts`**: Contém contextos React para gerenciamento de estado.
+- **`/types`**: Contém tipos de interface ts.
+- **`/public`**: Contém arquivos estáticos.
+- **`/app/api`**: Contém configuração do uso do AXIOS e Next-Auth.
+- **`/app/(comigotech)`**: Contém a página principal do app, dashboard.
+- **`/utils`**: Contém funções utilitárias e helpers.
 
-Resposta:
+## Contribuição
 
-    { "message": "Collaborator deleted successfully" }
+Se você deseja contribuir para o projeto, sinta-se à vontade para abrir um pull request ou issue no repositório.
