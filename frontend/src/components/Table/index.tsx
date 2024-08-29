@@ -7,10 +7,12 @@ import EditTicketModal from "../Modals/edit-ticket";
 import { useModal } from "@/contexts/modal-context";
 import { useState, useEffect } from "react";
 import { useTickets } from "@/contexts/ticket-context";
+import { useSession } from "next-auth/react";
 
 const TicketTable = () => {
   const { filteredTickets, fetchTickets, deleteTicket, updateTicket } =
     useTickets();
+  const { data: session } = useSession();
   const { openModal } = useModal();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [ticketToDelete, setTicketToDelete] = useState<number | null>(null);
@@ -90,10 +92,12 @@ const TicketTable = () => {
                   className="cursor-pointer text-lg"
                   onClick={() => handleEditClick(ticket)}
                 />
-                <FaRegTrashAlt
-                  className="text-red-500 cursor-pointer text-lg"
-                  onClick={() => handleDeleteClick(ticket.id)}
-                />
+                {session.user.role === "ADMIN" && (
+                  <FaRegTrashAlt
+                    className="text-red-500 cursor-pointer text-lg"
+                    onClick={() => handleDeleteClick(ticket.id)}
+                  />
+                )}
               </Table.Cell>
             </Table.Row>
           ))}

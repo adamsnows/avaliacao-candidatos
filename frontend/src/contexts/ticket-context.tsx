@@ -82,6 +82,7 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({
           .sort((a: Ticket, b: Ticket) => (a.id || 0) - (b.id || 0))
       );
       toast.success("Ticket atualizado com sucesso");
+      window.location.reload();
     } catch (error) {
       console.error("Erro ao atualizar o ticket:", error);
       toast.error("Erro ao atualizar o ticket");

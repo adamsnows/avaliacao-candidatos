@@ -87,7 +87,7 @@ const NewTicketModal = () => {
         };
 
         await addTicket(newTicket);
-        toast.success("Ticket criado com sucesso");
+        window.location.reload();
         closeModal();
       } catch (error) {
         toast.error("Erro ao criar o ticket");
