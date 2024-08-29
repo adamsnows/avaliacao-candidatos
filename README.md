@@ -59,7 +59,7 @@ Inicie o servidor
 
 # Comigotech Frontend
 
-O frontend do projeto Comigotech é uma aplicação desenvolvida utilizando React e TailwindCSS. A aplicação interage com a API RESTful do backend para gerenciar e visualizar tickets, permitindo aos usuários realizar operações de criação, atualização, exclusão e filtragem de tickets.
+O frontend do projeto Comigotech é uma aplicação desenvolvida utilizando NextJS e TailwindCSS. A aplicação interage com a API RESTful do backend para gerenciar e visualizar tickets, permitindo aos usuários realizar operações de criação, atualização, exclusão e filtragem de tickets.
 
 ### Endpoint da API
 
