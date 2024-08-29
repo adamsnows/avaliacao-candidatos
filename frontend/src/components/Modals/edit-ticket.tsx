@@ -66,7 +66,7 @@ interface EditTicketModalProps {
 const EditTicketModal = ({ initialData }: EditTicketModalProps) => {
   const { data: session } = useSession();
   const { closeModal } = useModal();
-  const { updateTicket } = useTickets();
+  const { updateTicket, refreshTickets } = useTickets();
   const [activeIndex, setActiveIndex] = useState(0);
   const [status, setStatus] = useState(initialData.status || "PENDING");
   const [contact, setContact] = useState(
@@ -106,6 +106,7 @@ const EditTicketModal = ({ initialData }: EditTicketModalProps) => {
         };
 
         await updateTicket(initialData.id, updatedTicket);
+        refreshTickets();
         closeModal();
       } catch (error) {
         toast.error("Erro ao atualizar o ticket");

@@ -24,6 +24,7 @@ interface TicketContextProps {
   updateTicket: (id: any, updatedTicket: Ticket) => Promise<void>;
   deleteTicket: (ticketId: number) => Promise<void>;
   applyFilters: (filters: any) => void;
+  refreshTickets: () => void;
 }
 
 const TicketContext = createContext<TicketContextProps | undefined>(undefined);
@@ -56,6 +57,10 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const refreshTickets = async () => {
+    await fetchTickets();
+  };
+
   const addTicket = async (ticket: Ticket) => {
     try {
       const response = await api.post("/tickets", ticket);
@@ -82,7 +87,6 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({
           .sort((a: Ticket, b: Ticket) => (a.id || 0) - (b.id || 0))
       );
       toast.success("Ticket atualizado com sucesso");
-      window.location.reload();
     } catch (error) {
       console.error("Erro ao atualizar o ticket:", error);
       toast.error("Erro ao atualizar o ticket");
@@ -98,7 +102,7 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({
           .sort((a: Ticket, b: Ticket) => (a.id || 0) - (b.id || 0))
       );
       toast.success("Ticket excluído com sucesso");
-      window.location.reload();
+      refreshTickets();
     } catch (error) {
       console.error("Erro ao excluir o ticket:", error);
       toast.error("Erro ao excluir o ticket");
@@ -152,6 +156,7 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({
         updateTicket,
         deleteTicket,
         applyFilters,
+        refreshTickets,
       }}
     >
       {children}

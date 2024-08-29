@@ -53,7 +53,7 @@ const statusOptions = [
 const NewTicketModal = () => {
   const { data: session } = useSession();
   const { closeModal } = useModal();
-  const { addTicket } = useTickets();
+  const { addTicket, refreshTickets } = useTickets();
   const [activeIndex, setActiveIndex] = useState(0);
   const [status, setStatus] = useState("PENDING");
   const [contact, setContact] = useState("false");
@@ -87,7 +87,7 @@ const NewTicketModal = () => {
         };
 
         await addTicket(newTicket);
-        window.location.reload();
+        refreshTickets();
         closeModal();
       } catch (error) {
         toast.error("Erro ao criar o ticket");
