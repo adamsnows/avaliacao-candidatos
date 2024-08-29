@@ -5,10 +5,10 @@ const jwt = require("jsonwebtoken");
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET || "ticket_managementz";
 
-const registerUser = async (username, password, role) => {
-  const existingUser = await prisma.user.findUnique({ where: { username } });
-  if (existingUser) {
-    throw new Error("Username already taken");
+const registerUser = async (username, password, role, email) => {
+  const existingEmail = await prisma.user.findUnique({ where: { email } });
+  if (existingEmail) {
+    throw new Error("Email already taken");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -17,6 +17,7 @@ const registerUser = async (username, password, role) => {
     data: {
       username,
       password: hashedPassword,
+      email,
       role,
     },
   });
@@ -24,15 +25,14 @@ const registerUser = async (username, password, role) => {
   return user;
 };
 
-const loginUser = async (username, password) => {
+const loginUser = async (email, password) => {
   const user = await prisma.user.findUnique({
-    where: { username },
+    where: { email },
     select: {
       id: true,
       username: true,
       password: true,
       role: true,
-      username: true,
       email: true,
     },
   });
@@ -53,8 +53,7 @@ const loginUser = async (username, password) => {
   return {
     token,
     role: user.role,
-    userId: user.id,
-    name: user.name,
+    username: user.username,
     email: user.email,
   };
 };
