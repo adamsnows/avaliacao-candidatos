@@ -51,6 +51,7 @@ const loginUser = async (email, password) => {
   });
 
   return {
+    id: user.id,
     token,
     role: user.role,
     username: user.username,
