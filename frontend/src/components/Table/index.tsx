@@ -5,19 +5,14 @@ import { MdOutlineEdit } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
 import EditTicketModal from "../Modals/edit-ticket";
 import { useModal } from "@/contexts/modal-context";
-import { useEffect, useState } from "react";
-import api from "@/app/api/axios/api";
-import toast from "react-hot-toast";
+import { useState } from "react";
+import { useTickets } from "@/contexts/ticket-context";
 
-const TicketTable = ({ initialTickets }) => {
+const TicketTable = () => {
+  const { tickets, deleteTicket, updateTicket } = useTickets();
   const { openModal } = useModal();
-  const [tickets, setTickets] = useState(initialTickets);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [ticketToDelete, setTicketToDelete] = useState(null);
-
-  useEffect(() => {
-    setTickets(initialTickets);
-  }, [initialTickets]);
 
   const handleEditClick = (ticket) => {
     openModal(<EditTicketModal initialData={ticket} onUpdate={updateTicket} />);
@@ -28,30 +23,11 @@ const TicketTable = ({ initialTickets }) => {
     setIsModalOpen(true);
   };
 
-  const deleteTicket = async () => {
+  const confirmDeleteTicket = async () => {
     if (!ticketToDelete) return;
-
-    try {
-      await api.delete(`/tickets/${ticketToDelete}`);
-      setTickets(tickets.filter((ticket) => ticket.id !== ticketToDelete));
-      toast.success("Ticket excluído com sucesso");
-      setIsModalOpen(false);
-      setTicketToDelete(null);
-    } catch (error) {
-      console.error("Erro ao excluir o ticket:", error);
-      toast.error("Erro ao excluir o ticket");
-    }
-  };
-
-  const updateTicket = async () => {
-    try {
-      const response = await api.get("/tickets");
-      setTickets(response.data);
-      toast.success("Tickets atualizados com sucesso");
-    } catch (error) {
-      console.error("Erro ao atualizar o ticket:", error);
-      toast.error("Erro ao atualizar o ticket");
-    }
+    await deleteTicket(ticketToDelete);
+    setIsModalOpen(false);
+    setTicketToDelete(null);
   };
 
   const formatDate = (date) => {
@@ -91,7 +67,7 @@ const TicketTable = ({ initialTickets }) => {
         </Table.Header>
         <Table.Body>
           {tickets.map((ticket) => (
-            <Table.Row key={ticket.id} className="bg-white ">
+            <Table.Row key={ticket.id} className="bg-white">
               <Table.Cell>#{ticket.id}</Table.Cell>
               <Table.Cell>{ticket.intention}</Table.Cell>
               <Table.Cell>{ticket.reason || "N/A"}</Table.Cell>
@@ -132,7 +108,7 @@ const TicketTable = ({ initialTickets }) => {
             <div className="flex gap-4 w-full">
               <Button
                 className="bg-blue-500 text-white w-full"
-                onClick={deleteTicket}
+                onClick={confirmDeleteTicket} // Corrigido aqui
               >
                 Sim
               </Button>

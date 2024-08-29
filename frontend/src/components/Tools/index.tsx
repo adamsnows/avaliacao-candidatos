@@ -3,29 +3,31 @@
 import { Button, Input, Select, Tab } from "rizzui";
 import { FaPlus } from "react-icons/fa6";
 import { LuKanbanSquare } from "react-icons/lu";
-
 import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
 import { IoIosMenu } from "react-icons/io";
-import { MdViewArray } from "react-icons/md";
-import { MdViewColumn } from "react-icons/md";
+import { MdViewArray, MdViewColumn } from "react-icons/md"; // Corrigido
 
 import { useState } from "react";
 import { useModal } from "@/contexts/modal-context";
 import NewTicketModal from "../Modals/new-ticket";
+import { useTickets } from "@/contexts/ticket-context";
 
 const ToolsComponent = () => {
-  const [period, setPeriod] = useState<string | null>(null);
-  const [orderBy, setOrderBy] = useState<string | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
-  const [type, setType] = useState<string | null>(null);
-  const [reason, setReason] = useState<string | null>(null);
-  const [client, setClient] = useState<string | null>(null);
-  const [vehicle, setVehicle] = useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    period: null,
+    orderBy: null,
+    status: null,
+    type: null,
+    reason: null,
+    client: null,
+    vehicle: null,
+  });
 
   const { openModal } = useModal();
+  const { addTicket } = useTickets();
 
   const handleOpenModal = () => {
-    openModal(<NewTicketModal />);
+    openModal(<NewTicketModal onSave={addTicket} />);
   };
 
   const periodOptions = [
@@ -41,18 +43,18 @@ const ToolsComponent = () => {
   ];
 
   const removeFilters = () => {
-    setPeriod(null);
-    setOrderBy(null);
-    setStatus(null);
-    setType(null);
-    setReason(null);
-    setClient(null);
-    setVehicle(null);
+    setFilters({
+      period: null,
+      orderBy: null,
+      status: null,
+      type: null,
+      reason: null,
+      client: null,
+      vehicle: null,
+    });
   };
 
-  const getTextColor = (value: string | null) => {
-    return value ? "text-primary" : "text-gray-600";
-  };
+  const getTextColor = (value) => (value ? "text-primary" : "text-gray-600");
 
   return (
     <div className="mt-6 flex gap-4 items-center h-[30px]">
@@ -71,93 +73,97 @@ const ToolsComponent = () => {
 
       <Select
         options={periodOptions}
-        value={period}
-        onChange={setPeriod}
+        value={filters.period}
+        onChange={(value) => setFilters((prev) => ({ ...prev, period: value }))}
         label="Período"
         labelClassName="mt-1"
         placeholder=""
         selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0 w-[100px]`}
-        className={` ${getTextColor(
-          period
-        )} flex  items-center border-none max-w-[130px]`}
+        className={`${getTextColor(
+          filters.period
+        )} flex items-center border-none max-w-[130px]`}
       />
 
       <Select
         options={orderByOptions}
-        value={orderBy}
-        onChange={setOrderBy}
+        value={filters.orderBy}
+        onChange={(value) =>
+          setFilters((prev) => ({ ...prev, orderBy: value }))
+        }
         label="Ordenado por"
         labelClassName="mt-1"
         placeholder=""
         selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0 w-[120px]`}
-        className={` ${getTextColor(
-          orderBy
+        className={`${getTextColor(
+          filters.orderBy
         )} ms-4 max-w-[220px] flex gap-0 items-center border-none`}
       />
 
       <Select
         options={periodOptions}
-        value={status}
-        onChange={setStatus}
+        value={filters.status}
+        onChange={(value) => setFilters((prev) => ({ ...prev, status: value }))}
         label="Status"
         labelClassName="mt-1"
         placeholder=""
-        selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0 }`}
-        className={` ${getTextColor(
-          status
+        selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0`}
+        className={`${getTextColor(
+          filters.status
         )} max-w-[130px] flex gap-0 items-center border-none`}
       />
 
       <Select
         options={periodOptions}
-        value={type}
-        onChange={setType}
+        value={filters.type}
+        onChange={(value) => setFilters((prev) => ({ ...prev, type: value }))}
         label="Tipo"
         labelClassName="mt-1"
         placeholder=""
-        selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0 }`}
+        selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0`}
         className={`${getTextColor(
-          type
+          filters.type
         )} w-[130px] flex gap-0 items-center border-none`}
       />
 
       <Select
         options={periodOptions}
-        value={reason}
-        onChange={setReason}
+        value={filters.reason}
+        onChange={(value) => setFilters((prev) => ({ ...prev, reason: value }))}
         label="Motivo"
         labelClassName="mt-1"
         placeholder=""
-        selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0 }`}
+        selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0`}
         className={`${getTextColor(
-          reason
+          filters.reason
         )} max-w-[130px] flex gap-0 items-center border-none`}
       />
 
       <Select
         options={periodOptions}
-        value={client}
-        onChange={setClient}
+        value={filters.client}
+        onChange={(value) => setFilters((prev) => ({ ...prev, client: value }))}
         label="Cliente"
         labelClassName="mt-1"
         placeholder=""
         searchContainerClassName="w-[200px]"
-        selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0 }`}
-        className={` ${getTextColor(
-          client
+        selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0`}
+        className={`${getTextColor(
+          filters.client
         )} max-w-[130px] flex gap-0 items-center border-none`}
       />
 
       <Select
         options={periodOptions}
-        value={vehicle}
-        onChange={setVehicle}
+        value={filters.vehicle}
+        onChange={(value) =>
+          setFilters((prev) => ({ ...prev, vehicle: value }))
+        }
         label="Veículo"
         labelClassName="mt-1"
         placeholder=""
-        selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0 }`}
-        className={` ${getTextColor(
-          vehicle
+        selectClassName={`border-none outline-none hover:outline-none hover:ring-0 hover:border-none ring-0 focus:ring-0`}
+        className={`${getTextColor(
+          filters.vehicle
         )} max-w-[130px] flex gap-0 items-center border-none`}
       />
 

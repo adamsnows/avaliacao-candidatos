@@ -41,7 +41,7 @@ const reasonOptions = [
   { label: "Motivo 3", value: "REASON_3" },
 ];
 
-const NewTicketModal = () => {
+const NewTicketModal = ({ onSave }) => {
   const { data: session } = useSession();
   const { closeModal } = useModal();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -62,7 +62,7 @@ const NewTicketModal = () => {
       toast.error("Selecione se houve contato.");
       valid = false;
     }
-    if (!contactType) {
+    if (!contactType.value) {
       toast.error("Selecione o tipo de contato.");
       valid = false;
     }
@@ -85,7 +85,7 @@ const NewTicketModal = () => {
 
   const createTicket = async () => {
     try {
-      await api.post("/tickets/", {
+      const newTicket = {
         status: "PENDING",
         userId: session.user.id,
         contact: contactValue === "yes",
@@ -94,10 +94,13 @@ const NewTicketModal = () => {
         vehicles: vehicle,
         reason,
         additionalInfo,
-      });
+      };
+
+      await api.post("/tickets/", newTicket);
 
       toast.success("Ticket criado com sucesso!");
-      window.location.reload();
+      onSave(newTicket);
+      closeModal();
     } catch (error) {
       toast.error("Erro ao criar o ticket. Tente novamente.");
       console.error("Erro ao criar o ticket:", error);
@@ -256,8 +259,8 @@ const NewTicketModal = () => {
             </>
           ) : (
             <>
-              <span className="mr-2">Salvar</span>
               <MdDone />
+              <span className="ml-2">Salvar</span>
             </>
           )}
         </Button>
