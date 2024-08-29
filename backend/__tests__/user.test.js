@@ -13,14 +13,15 @@ describe("User Routes", () => {
     const hashedPassword = await bcrypt.hash("testpassword", 10);
     const user = await prisma.user.create({
       data: {
-        username: "adminuser",
+        email: "adminuser",
         password: hashedPassword,
+        username: "adminuser",
         role: "ADMIN",
       },
     });
 
     const loginResponse = await request(app).post("/api/auth/login").send({
-      username: "adminuser",
+      email: "adminuser",
       password: "testpassword",
     });
 

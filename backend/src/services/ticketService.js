@@ -29,52 +29,69 @@ const validateTicketData = (data) => {
 const createTicket = async (ticketData) => {
   const validatedData = validateTicketData(ticketData);
 
-  const ticket = await prisma.ticket.create({
-    data: {
-      title: validatedData.title,
-      description: validatedData.description,
-      status: validatedData.status,
-      user: { connect: { id: validatedData.userId } },
-      contact: validatedData.contact,
-      contactType: validatedData.contactType,
-      intention: validatedData.intention,
-      vehicles: validatedData.vehicles,
-      reason: validatedData.reason,
-      additionalInfo: validatedData.additionalInfo,
-    },
-  });
+  try {
+    const ticket = await prisma.ticket.create({
+      data: {
+        status: validatedData.status,
+        user: { connect: { id: validatedData.userId } },
+        contact: validatedData.contact,
+        contactType: validatedData.contactType,
+        intention: validatedData.intention,
+        vehicles: validatedData.vehicles,
+        reason: validatedData.reason,
+        additionalInfo: validatedData.additionalInfo,
+      },
+    });
 
-  return ticket;
+    return ticket;
+  } catch (error) {
+    if (error.code === "P2025") {
+      throw new Error("User not found");
+    }
+    throw error;
+  }
 };
 
 const updateTicket = async (id, ticketData) => {
   const validatedData = validateTicketData(ticketData);
 
-  const updatedTicket = await prisma.ticket.update({
-    where: { id: Number(id) },
-    data: {
-      title: validatedData.title,
-      description: validatedData.description,
-      status: validatedData.status,
-      user: { connect: { id: validatedData.userId } },
-      contact: validatedData.contact,
-      contactType: validatedData.contactType,
-      intention: validatedData.intention,
-      vehicles: validatedData.vehicles,
-      reason: validatedData.reason,
-      additionalInfo: validatedData.additionalInfo,
-    },
-  });
+  try {
+    const updatedTicket = await prisma.ticket.update({
+      where: { id: Number(id) },
+      data: {
+        status: validatedData.status,
+        user: { connect: { id: validatedData.userId } },
+        contact: validatedData.contact,
+        contactType: validatedData.contactType,
+        intention: validatedData.intention,
+        vehicles: validatedData.vehicles,
+        reason: validatedData.reason,
+        additionalInfo: validatedData.additionalInfo,
+      },
+    });
 
-  return updatedTicket;
+    return updatedTicket;
+  } catch (error) {
+    if (error.code === "P2025") {
+      throw new Error("Ticket not found");
+    }
+    throw error;
+  }
 };
 
 const deleteTicket = async (id) => {
-  await prisma.ticket.delete({
-    where: { id: Number(id) },
-  });
+  try {
+    await prisma.ticket.delete({
+      where: { id: Number(id) },
+    });
 
-  return { message: "Ticket deleted successfully" };
+    return { message: "Ticket deleted successfully" };
+  } catch (error) {
+    if (error.code === "P2025") {
+      throw new Error("Ticket not found");
+    }
+    throw error;
+  }
 };
 
 const getTicket = async (id) => {

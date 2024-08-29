@@ -7,18 +7,18 @@ const prisma = new PrismaClient();
 describe("Auth Routes", () => {
   beforeAll(async () => {
     await prisma.user.deleteMany();
-    await prisma.collaborator.deleteMany();
   });
 
   afterAll(async () => {
     await prisma.$disconnect();
   });
 
-  it("Deve registrar um novo usuário com sucesso", async () => {
+  it("Deve registrar um novo usuário attendant com sucesso", async () => {
     const response = await request(app).post("/api/auth/register").send({
       username: "testuser",
+      email: "testusers@example.com",
       password: "testpassword",
-      role: "ADMIN",
+      role: "ATTENDANT",
     });
 
     expect(response.statusCode).toBe(201);
@@ -30,13 +30,14 @@ describe("Auth Routes", () => {
     await prisma.user.create({
       data: {
         username: "testloginuser",
+        email: "testloginusers@example.com",
         password: await bcrypt.hash("testpassword", 10),
         role: "ADMIN",
       },
     });
 
     const response = await request(app).post("/api/auth/login").send({
-      username: "testloginuser",
+      email: "testloginusers@example.com",
       password: "testpassword",
     });
 
@@ -44,34 +45,16 @@ describe("Auth Routes", () => {
     expect(response.body).toHaveProperty("token");
   });
 
-  it("Deve registrar um novo colaborador com sucesso", async () => {
-    const user = await prisma.user.create({
-      data: {
-        username: "adminuser",
-        password: await bcrypt.hash("adminpassword", 10),
-        role: "ADMIN",
-      },
-    });
-
-    const loginResponse = await request(app).post("/api/auth/login").send({
+  it("Deve registrar um novo usuário admin com sucesso", async () => {
+    const response = await request(app).post("/api/auth/register").send({
       username: "adminuser",
-      password: "adminpassword",
+      email: "adminuser@example.com",
+      password: "testpassword",
+      role: "ADMIN",
     });
-
-    const authToken = loginResponse.body.token;
-
-    const response = await request(app)
-      .post("/api/auth/register-collaborator")
-      .set("Authorization", `Bearer ${authToken}`)
-      .send({
-        name: "Test Collaborator",
-        email: "testcollaborator@exampless.com",
-        password: "collaboratorpassword",
-        role: "ATTENDANT",
-      });
 
     expect(response.statusCode).toBe(201);
-    expect(response.body.collaborator).toHaveProperty("id");
-    expect(response.body.collaborator.name).toBe("Test Collaborator");
+    expect(response.body.user).toHaveProperty("id");
+    expect(response.body.user.username).toBe("adminuser");
   });
 });
