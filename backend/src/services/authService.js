@@ -25,7 +25,18 @@ const registerUser = async (username, password, role) => {
 };
 
 const loginUser = async (username, password) => {
-  const user = await prisma.user.findUnique({ where: { username } });
+  const user = await prisma.user.findUnique({
+    where: { username },
+    select: {
+      id: true,
+      username: true,
+      password: true,
+      role: true,
+      username: true,
+      email: true,
+    },
+  });
+
   if (!user) {
     throw new Error("Invalid credentials");
   }
@@ -39,7 +50,13 @@ const loginUser = async (username, password) => {
     expiresIn: "7d",
   });
 
-  return { token, role: user.role };
+  return {
+    token,
+    role: user.role,
+    userId: user.id,
+    name: user.name,
+    email: user.email,
+  };
 };
 
 const registerCollaborator = async (name, email, password, role) => {
