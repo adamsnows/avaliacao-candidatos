@@ -6,3 +6,7 @@
   --tw-ring-opacity: 0 !important;
   --tw-ring-color: transparent !important;
 }
+
+.table-row {
+  border-bottom: 1px solid #e2e8f0;
+}

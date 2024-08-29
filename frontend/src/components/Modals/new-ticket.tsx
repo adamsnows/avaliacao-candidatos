@@ -1,5 +1,7 @@
-"use client";
-
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
+import { useModal } from "@/contexts/modal-context";
 import {
   Button,
   Input,
@@ -9,25 +11,16 @@ import {
   Tab,
   Textarea,
 } from "rizzui";
-import { useState } from "react";
 import { AdvancedRadio, RadioGroup, Text } from "rizzui";
 import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { CiCircleInfo } from "react-icons/ci";
 import { MdDone } from "react-icons/md";
-import toast from "react-hot-toast";
+import api from "@/app/api/axios/api";
 
 const options = [
-  {
-    value: "yes",
-    title: "Sim",
-    description: "O cliente entrou em contato",
-  },
-  {
-    value: "no",
-    title: "Não",
-    description: "Contato será feito",
-  },
+  { value: "yes", title: "Sim", description: "O cliente entrou em contato" },
+  { value: "no", title: "Não", description: "Contato será feito" },
 ];
 
 const selectOptions = [
@@ -37,81 +30,85 @@ const selectOptions = [
 ];
 
 const vehicleOptions = [
-  { label: "Veículo 1", value: "vehicle-1" },
-  { label: "Veículo 2", value: "vehicle-2" },
-  { label: "Veículo 3", value: "vehicle-3" },
+  { label: "Veículo 1", value: "Carro" },
+  { label: "Veículo 2", value: "Moto" },
+  { label: "Veículo 3", value: "Bicicleta" },
 ];
 
 const reasonOptions = [
-  { label: "Motivo 1", value: "reason-1" },
-  { label: "Motivo 2", value: "reason-2" },
-  { label: "Motivo 3", value: "reason-3" },
+  { label: "Motivo 1", value: "REASON_1" },
+  { label: "Motivo 2", value: "REASON_2" },
+  { label: "Motivo 3", value: "REASON_3" },
 ];
 
-const NewTicketModal = () => {
+const NewTicketModal = ({ onTicketCreated }) => {
+  const { data: session } = useSession();
+  const { closeModal } = useModal();
   const [activeIndex, setActiveIndex] = useState(0);
   const [contactValue, setContactValue] = useState("yes");
-  const [contactType, setContactType] = useState("");
+  const [contactType, setContactType] = useState({
+    label: "Tipo de contato",
+    value: "",
+  });
   const [intention, setIntention] = useState("operational");
   const [reason, setReason] = useState("");
   const [vehicle, setVehicle] = useState<string[]>([]);
+  const [additionalInfo, setAdditionalInfo] = useState("");
 
-  const validateFields = () => {
+  const validateAndProceed = async () => {
     let valid = true;
 
     if (!contactValue) {
-      toast.error("Campo 'Houve contato' é obrigatório.");
+      toast.error("Selecione se houve contato.");
       valid = false;
     }
-
     if (!contactType) {
-      toast.error("Campo 'Tipo de contato' é obrigatório.");
+      toast.error("Selecione o tipo de contato.");
       valid = false;
     }
-
     if (!intention) {
-      toast.error("Campo 'Intuito' é obrigatório.");
+      toast.error("Selecione o intuito do ticket.");
       valid = false;
     }
-
-    if (activeIndex === 2 && vehicle.length === 0) {
-      toast.error("Campo 'Veículo(s)' é obrigatório.");
+    if (vehicle.length === 0) {
+      toast.error("Selecione pelo menos um veículo.");
       valid = false;
     }
-
-    if (activeIndex === 2 && reason.length === 0) {
-      toast.error("Campo 'Motivo' é obrigatório.");
+    if (!reason) {
+      toast.error("Selecione o motivo do ticket.");
       valid = false;
     }
-
-    return valid;
+    if (valid) {
+      await createTicket();
+    }
   };
 
-  const handleNext = async () => {
-    if (!validateFields()) return;
+  const createTicket = async () => {
+    try {
+      await api.post("/tickets/", {
+        status: "PENDING",
+        userId: session.user.id,
+        contact: contactValue === "yes",
+        contactType: contactType.value,
+        intention,
+        vehicles: vehicle,
+        reason,
+        additionalInfo,
+      });
 
+      toast.success("Ticket criado com sucesso!");
+      closeModal();
+    } catch (error) {
+      toast.error("Erro ao criar o ticket. Tente novamente.");
+      console.error("Erro ao criar o ticket:", error);
+    }
+  };
+
+  const handleNext = () => {
     if (activeIndex < 2) {
       setActiveIndex((prevIndex) => prevIndex + 1);
     } else {
-      try {
-        const updatedTicket = {
-          status: status.value, // Ajuste aqui para usar apenas o valor
-          userId: session?.user?.id,
-          contact: contactValue === "yes",
-          contactType,
-          intention,
-          vehicles: vehicle,
-          reason,
-          additionalInfo: additionalInfo,
-        };
-
-        await api.put(`/tickets/${initialData.id}`, updatedTicket);
-        onUpdate(updatedTicket);
-        toast.success("Ticket atualizado com sucesso");
-        closeModal();
-      } catch (error) {
-        toast.error("Erro ao atualizar o ticket");
-      }
+      validateAndProceed();
     }
   };
 
@@ -186,10 +183,10 @@ const NewTicketModal = () => {
               setValue={setIntention}
               className="grid grid-cols-2 gap-4 text-gray-700 font-light"
             >
-              <Radio label="Operacional" value="operational" />
-              <Radio label="Relacionamento" value="relationship" />
-              <Radio label="Suporte" value="support" />
-              <Radio label="Vendas" value="selling" />
+              <Radio label="Operacional" value="OPERATIONAL" />
+              <Radio label="Relacionamento" value="RELATIONSHIP" />
+              <Radio label="Suporte" value="SUPPORT" />
+              <Radio label="Vendas" value="SELLING" />
             </RadioGroup>
             <MultiSelect
               className="mt-4"
@@ -208,19 +205,20 @@ const NewTicketModal = () => {
               label="Search"
               suffix={<MagnifyingGlassIcon className="w-4" />}
               placeholder="Pesquisar"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
             />
             <RadioGroup
-              value={intention}
-              setValue={setIntention}
+              value={reason}
+              setValue={setReason}
               className="flex flex-col mt-4 gap-4 text-gray-700 font-light bg-gray-100 p-4"
             >
-              <Radio label="Motivo 1" value="operational" />
-              <Radio label="Motivo 2" value="relationship" />
-              <Radio label="Motivo 3" value="support" />
-              <Radio label="Motivo 4" value="selling" />
+              {reasonOptions.map((item) => (
+                <Radio key={item.value} label={item.label} value={item.value} />
+              ))}
             </RadioGroup>
 
-            <div className="flex gap-2 flex-col  my-4 ">
+            <div className="flex gap-2 flex-col my-4 ">
               <div className="flex gap-2 items-center ">
                 <span className="text-primary">Prazo estimado: 06/04/2024</span>
                 <CiCircleInfo className="text-lg" />
@@ -230,7 +228,11 @@ const NewTicketModal = () => {
                 {`{3 dias úteis}`}
               </span>
             </div>
-            <Textarea placeholder="Informe mais detalhes sobre o ticket" />
+            <Textarea
+              placeholder="Informe mais detalhes sobre o ticket"
+              value={additionalInfo}
+              onChange={(e) => setAdditionalInfo(e.target.value)}
+            />
           </Tab.Panel>
         </Tab.Panels>
       </Tab>
@@ -239,18 +241,25 @@ const NewTicketModal = () => {
         {activeIndex > 0 && (
           <Button
             variant="outline"
-            className="mt-4 flex gap-4 border-primary text-primary"
+            className="mt-4 w-28"
             onClick={handlePrevious}
           >
             <FaArrowLeft />
-
-            <span>Voltar</span>
+            <span className="ml-2">Anterior</span>
           </Button>
         )}
-
-        <Button className="ms-auto mt-4 flex gap-4" onClick={handleNext}>
-          <span>{activeIndex < 2 ? "Avançar" : "Cadastrar"}</span>
-          {activeIndex < 2 ? <FaArrowRight /> : <MdDone className="text-lg" />}
+        <Button className="mt-4 w-28" onClick={handleNext}>
+          {activeIndex < 2 ? (
+            <>
+              <span className="mr-2">Próximo</span>
+              <FaArrowRight />
+            </>
+          ) : (
+            <>
+              <span className="mr-2">Salvar</span>
+              <MdDone />
+            </>
+          )}
         </Button>
       </div>
     </div>

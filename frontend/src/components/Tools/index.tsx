@@ -13,7 +13,7 @@ import { useState } from "react";
 import { useModal } from "@/contexts/modal-context";
 import NewTicketModal from "../Modals/new-ticket";
 
-const ToolsComponent = () => {
+const ToolsComponent = ({ onTicketCreated }) => {
   const [period, setPeriod] = useState<string | null>(null);
   const [orderBy, setOrderBy] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
@@ -25,7 +25,7 @@ const ToolsComponent = () => {
   const { openModal } = useModal();
 
   const handleOpenModal = () => {
-    openModal(<NewTicketModal />);
+    openModal(<NewTicketModal onTicketCreated={onTicketCreated} />);
   };
 
   const periodOptions = [

@@ -35,13 +35,27 @@ const TicketTable = ({ initialTickets }) => {
     }
   };
 
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const calculateDueDate = (createdAt) => {
+    const date = new Date(createdAt);
+    date.setDate(date.getDate() + 7);
+    return formatDate(date);
+  };
+
   if (!tickets) {
     return <Loader size="lg" className="mt-10 mx-auto" />;
   }
 
   return (
     <div className="mt-6">
-      <Table className="text-gray-800 font-light text-sm">
+      <Table className="text-gray-800 font-light text-sm border-spacing-y-2 border-separate">
         <Table.Header>
           <Table.Row>
             <Table.Head>ID</Table.Head>
@@ -58,17 +72,15 @@ const TicketTable = ({ initialTickets }) => {
         </Table.Header>
         <Table.Body>
           {tickets.map((ticket) => (
-            <Table.Row key={ticket.id} className="bg-white">
+            <Table.Row key={ticket.id} className="bg-white ">
               <Table.Cell>#{ticket.id}</Table.Cell>
               <Table.Cell>{ticket.intention}</Table.Cell>
               <Table.Cell>{ticket.reason || "N/A"}</Table.Cell>
               <Table.Cell>{ticket.description}</Table.Cell>
               <Table.Cell>{ticket.userId || "N/A"}</Table.Cell>
               <Table.Cell>{ticket.vehicles.join(", ") || "N/A"}</Table.Cell>
-              <Table.Cell>
-                {new Date(ticket.createdAt).toLocaleDateString()}
-              </Table.Cell>
-              <Table.Cell>{"N/A"}</Table.Cell>
+              <Table.Cell>{formatDate(ticket.createdAt)}</Table.Cell>
+              <Table.Cell>{calculateDueDate(ticket.createdAt)}</Table.Cell>
               <Table.Cell>
                 <Badge>{ticket.status}</Badge>
               </Table.Cell>
