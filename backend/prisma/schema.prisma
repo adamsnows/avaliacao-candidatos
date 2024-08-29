@@ -22,8 +22,6 @@ model User {
 
 model Ticket {
   id             Int          @id @default(autoincrement())
-  title          String
-  description    String
   status         TicketStatus @default(PENDING)
   userId         Int?
   user           User?        @relation("UserTickets", fields: [userId], references: [id])
