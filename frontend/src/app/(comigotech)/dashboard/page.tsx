@@ -38,19 +38,10 @@ const Dashboard = () => {
     fetchTickets();
   }, []);
 
-  const handleTicketCreated = async () => {
-    try {
-      const response = await api.get("/tickets");
-      setTickets(response.data);
-    } catch (error) {
-      console.error("Erro ao buscar tickets", error);
-    }
-  };
-
   return (
     <>
       <BreadcrumbComponent breadcrumb={pageHeader.breadcrumb} />
-      <ToolsComponent onTicketCreated={handleTicketCreated} />
+      <ToolsComponent />
       <TicketTable initialTickets={tickets} />
     </>
   );

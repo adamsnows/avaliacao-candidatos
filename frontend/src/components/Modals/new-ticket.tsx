@@ -41,7 +41,7 @@ const reasonOptions = [
   { label: "Motivo 3", value: "REASON_3" },
 ];
 
-const NewTicketModal = ({ onTicketCreated }) => {
+const NewTicketModal = () => {
   const { data: session } = useSession();
   const { closeModal } = useModal();
   const [activeIndex, setActiveIndex] = useState(0);
